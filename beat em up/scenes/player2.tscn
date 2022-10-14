@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scenes/player.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/pics/shadow.png" type="Texture" id=2]
+[ext_resource path="res://scenes/shadow.gd" type="Script" id=3]
+
+[node name="player" type="Node2D"]
+
+[node name="shadow" type="Sprite" parent="."]
+position = Vector2( -11, 5.875 )
+scale = Vector2( 0.696429, 0.824074 )
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="KinematicBody2D" parent="." instance=ExtResource( 1 )]
