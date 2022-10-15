@@ -14,7 +14,7 @@ var jumping = false
 
 func _physics_process(delta):
 	var axis = get_input_axis()
-	#print(jumping)
+	
 	if axis == Vector2.ZERO:
 		if jumping == false:
 			$AnimationPlayer.play("idle")
@@ -23,7 +23,7 @@ func _physics_process(delta):
 		if jumping == false:
 			$AnimationPlayer.play("walk")
 		apply_movement(axis * acceleration * delta)
-		
+	
 	if global_position.y < 250 and jumping == false:
 		motion.y = 0
 		if axis.y > 0:
@@ -33,30 +33,26 @@ func _physics_process(delta):
 		jumping = true
 		z += -jump_speed * jumpMultiplyer
 	
-	if z > 25 * jumpMultiplyer:
+	if z >= jump_speed * jumpMultiplyer - gravity:
 		jumping = false
 		z = 0
 		motion.y = 0
-		
+	
 	if jumping == true:
 		z += gravity
 		motion.y = z
 	
+	$CollisionShape2D.disabled = jumping
+	z_index = int(jumping)
 	motion = move_and_slide(motion)
-	print (z)
 
 func get_input_axis():
 	var axis = Vector2.ZERO
 	axis.x = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
 	axis.y = (int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))) * 2
 	
-	if axis.x < 0:
-		$Sprite.flip_h = false
-	elif axis.x > 0:
-		$Sprite.flip_h = true
-
 	return axis.normalized()
-	
+
 func apply_friction(amount):
 	if motion.length() > amount:
 		motion -= motion.normalized() * amount
@@ -66,6 +62,8 @@ func apply_friction(amount):
 func apply_movement(accel):
 	motion += accel
 	motion = motion.limit_length(max_speed)
+	
+	$Sprite.flip_h = accel.x > 0
 
 #const acceleration = 700
 #const max_speed = 250
